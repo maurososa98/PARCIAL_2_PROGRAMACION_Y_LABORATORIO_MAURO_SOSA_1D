@@ -8,12 +8,12 @@
 - División: 1 D
 - Legajo: 115568
 
-## Parcial 1 - Programación y Laboratorio - ¿Quién quiere ser millonario?
+## Parcial 2 - Programación y Laboratorio - Juego SPIDER-MAN
 
 ![Python](./imagenes/juego.png)
 
 ## Descripción
 
-## :robot: Link video defensa del juego
+<!-- ## :robot: Link video defensa del juego
 
-- [video]()
+- [video]() -->
