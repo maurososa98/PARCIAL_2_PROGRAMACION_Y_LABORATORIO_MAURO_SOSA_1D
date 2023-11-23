@@ -1,15 +1,7 @@
 import pygame
-from modulos.funciones import *
-from modulos.objetos_en_pantalla.clase_nivel import *
-
 from modulos.objetos_en_pantalla.clase_enemigo import *
-
-escala_jefe_1 = (72,107)
-escala_jefe_2 = (127,162)
-lista_imagenes_jefe_venom_derecha = lista_imagenes("imagenes/venom/camina/0.png",7,escala_jefe_1,True)
-lista_imagenes_jefe_venom_izquierda = lista_imagenes("imagenes/venom/camina/0.png",7,escala_jefe_1)
-grupo_jefe = pygame.sprite.Group()
-lista_jefe = []
+from modulos.objetos_en_pantalla.clase_nivel import *
+from modulos.funciones import *
 
 class Jefe(Enemigo):
     def __init__(self, x, y, lista_imagenes, refrescar_animacion, cuanto_camina, lista_imagenes_izquierda, lista_imagenes_derecha, velocidad):
@@ -76,3 +68,8 @@ class Jefe(Enemigo):
         self.rect.x += self.desplazamiento_x
 
         self.animar(self.esta_saltando,self.desplazamiento_y,self.velocidad)
+
+    def vidas_en_pantalla(self, pantalla, tamaño_pantalla, vidas):
+        imagen_vidas = pygame.image.load(f"imagenes/venom/cantidad_vida/{vidas}.png")
+        imagen_vidas = pygame.transform.scale(imagen_vidas, (200,50))
+        pantalla.blit(imagen_vidas, (tamaño_pantalla[0] - 850, 20))

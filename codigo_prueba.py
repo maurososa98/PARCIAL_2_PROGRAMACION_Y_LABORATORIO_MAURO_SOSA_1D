@@ -151,3 +151,21 @@
 #         self.rect.x += self.desplazamiento_x
 
 #         self.animar(self.esta_saltando,self.desplazamiento_y,self.velocidad)
+import pygame
+
+class Bala(pygame.sprite.Sprite):
+    def __init__(self,x ,y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(r"imagenes\trampa\trampa_disparo.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+bala_1 = Bala(0,0)
+bala_2 = Bala(0,0)
+bala_3 = Bala(0,0)
+grupo_bala_1 = pygame.sprite.Group()
+
+grupo_bala_1.add(bala_1)
+grupo_bala_1.add(bala_2)
+grupo_bala_1.add(bala_3)
+print(pygame.sprite.Group.sprites(grupo_bala_1))

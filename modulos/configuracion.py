@@ -31,7 +31,7 @@ class Configuracion:
         fondo = pygame.image.load(imagen_fondo)
         self.fondo = pygame.transform.scale(fondo, self.tamaño_pantalla)
 
-    def set_fuente(self, fuente:str, tamaño_fuente:int=60):
+    def set_fuente(self, fuente:str, tamaño_fuente:int=30):
         self.fuente = pygame.font.SysFont(fuente, tamaño_fuente)
 
     def set_musica(self, ruta:str):

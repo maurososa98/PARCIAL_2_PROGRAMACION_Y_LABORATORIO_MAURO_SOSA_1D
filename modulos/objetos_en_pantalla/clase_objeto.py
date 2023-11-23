@@ -1,16 +1,5 @@
 import pygame
 from modulos.objetos_en_pantalla.clase_nivel import *
-from modulos.funciones import *
-
-lista_imagenes_vida = lista_imagenes("imagenes/vida/0.png",12,(22,26))
-grupo_vidas_nivel_1 = pygame.sprite.Group()
-grupo_vidas_nivel_2 = pygame.sprite.Group()
-grupo_vidas_nivel_3 = pygame.sprite.Group()
-
-lista_imagenes_punto = lista_imagenes("imagenes/punto/0.png",16,(10,16))
-grupo_puntos_nivel_1 = pygame.sprite.Group()
-grupo_puntos_nivel_2 = pygame.sprite.Group()
-grupo_puntos_nivel_3 = pygame.sprite.Group()
 
 class Objeto(pygame.sprite.Sprite):
     def __init__(self,x,y, lista_imagenes, refrescar_animacion):
@@ -53,5 +42,9 @@ class ItemPunto(Objeto):
         super().__init__(x, y, lista_imagenes, refrescar_animacion)
 
 class ItemVida(Objeto):
+    def __init__(self, x, y, lista_imagenes, refrescar_animacion):
+        super().__init__(x, y, lista_imagenes, refrescar_animacion)
+
+class Salida(Objeto):
     def __init__(self, x, y, lista_imagenes, refrescar_animacion):
         super().__init__(x, y, lista_imagenes, refrescar_animacion)
