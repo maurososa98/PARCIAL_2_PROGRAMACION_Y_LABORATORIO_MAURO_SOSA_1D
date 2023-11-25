@@ -3,6 +3,7 @@ from modulos.objetos_en_pantalla.clase_nivel import *
 from modulos.objetos_en_pantalla.clase_enemigo import *
 from modulos.objetos_en_pantalla.clase_jefe import *
 from modulos.objetos_en_pantalla.clase_bala import *
+from modulos.objetos_en_pantalla.class_formulario import *
 from modulos.valores.colores import *
 from modulos.valores.niveles import *
 from modulos.configuracion import *
@@ -95,6 +96,11 @@ class Juego(Configuracion):
         self.sonido_reta_vida = pygame.mixer.Sound(("musica/resta_vida.wav"))
         self.sonido_enemigo_golpeado = pygame.mixer.Sound(("musica/enemigo_golpeado.wav"))
         self.cant_enemigos_eliminados = 0
+        
+        #-------------- TIEMPO --------------------------------------------------------------------
+        self.INICIA_CONTADOR = pygame.USEREVENT
+        pygame.time.set_timer(self.INICIA_CONTADOR, 1000) # temposrizador
+        self.contador_tiempo = 60
 
     def set_heroe(self):
         posicion_inicial_x = 55
@@ -154,6 +160,7 @@ class Juego(Configuracion):
                 self.registro_colisiones(grupo_enemigos_nivel_1, grupo_bala_1, grupo_bala_2, grupo_bala_3)
 
                 if self.fin_juego == 2:
+                    self.contador_tiempo = 60
                     self.bandera_nivel_1 = False
                     self.bandera_nivel_2 = True
                     self.heroe.rect.x = 55
@@ -191,8 +198,9 @@ class Juego(Configuracion):
                 self.recolectar_puntos(grupo_puntos_nivel_2)
                 self.recolectar_vidas(grupo_vidas_nivel_2)
                 self.registro_colisiones(grupo_enemigos_nivel_2, grupo_bala_1, grupo_bala_2, grupo_bala_3)
-                
+
                 if self.fin_juego == 3:
+                    self.contador_tiempo = 60
                     self.bandera_nivel_2 = False
                     self.bandera_nivel_3 = True
                     self.heroe.rect.x = 55
@@ -205,7 +213,7 @@ class Juego(Configuracion):
             if self.bandera_nivel_3:
                 self.blit_fondo()
                 nivel_3.dibujar_plataformas(self.PANTALLA)
-                
+
                 grupo_enemigos_nivel_3.update()
                 grupo_puntos_nivel_3.update()
                 grupo_vidas_nivel_3.update()
@@ -233,7 +241,7 @@ class Juego(Configuracion):
                 elif self.vidas_jefe == 0 and self.jefe_muerto == False:
                     self.jefe_muerto = True
                     lista_jefe[0].rect.y += 62
-                    lista_jefe[0].image = pygame.image.load("imagenes/venom/muere/6.png") 
+                    lista_jefe[0].image = pygame.image.load("imagenes/venom/muere/6.png")
                     
                 lista_jefe[0].vidas_en_pantalla(self.PANTALLA, self.tamaño_pantalla, self.vidas_jefe)
 
@@ -248,6 +256,10 @@ class Juego(Configuracion):
 
             self.texto_en_pantalla(f"PUNTOS: {self.puntos}", NEGRO, self.tamaño_pantalla[0] - 200, self.tamaño_pantalla[1] -35)
             self.heroe.vidas_en_pantalla(self.PANTALLA, self.tamaño_pantalla, self.vidas_spiderman)
+            
+            pygame.draw.circle(self.PANTALLA, ROJO, (440,635), 20)
+            texto_contador_tiempo = self.fuente.render(f"{(self.contador_tiempo):.0f}",False,BLANCO)
+            self.PANTALLA.blit(texto_contador_tiempo, (430,625))
 
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
@@ -265,6 +277,8 @@ class Juego(Configuracion):
                         self.parar_musica()
                         self.set_musica(musica_nivel_1)
                         self.reproducir_musica()
+                elif (evento.type == self.INICIA_CONTADOR and (self.bandera_nivel_1 or self.bandera_nivel_2 or self.bandera_nivel_3)):
+                        self.contador_tiempo -= 1
             pygame.display.flip()
         pygame.quit()
 
