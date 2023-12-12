@@ -149,7 +149,8 @@ class Juego(Configuracion):
             if self.bandera_nivel_3:
                 if self.nivel.jefe_muerto == False:
                     if self.contador_tiempo > 0:
-                        self.nivel.update_nivel_tres(self.pressed_keys, self.reinicia_nivel)
+                        # self.nivel.update_nivel_tres(self.pressed_keys, self.reinicia_nivel)
+                        self.nivel.update_nivel_tres(self.pressed_keys)
                         self.fin_juego = self.nivel.registro_nivel()
                     if self.contador_tiempo <= 0 or self.fin_juego == 0:
                         self.PANTALLA.blit(self.imagen_game_over, (180,135))

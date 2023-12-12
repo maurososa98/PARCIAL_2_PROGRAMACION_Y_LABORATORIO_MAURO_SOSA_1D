@@ -89,7 +89,8 @@ class NivelActual(Niveles):
         self.recolectar_vidas(grupo_vidas_nivel_2)
         self.registro_colisiones(grupo_enemigos_nivel_2, grupo_bala_1, grupo_bala_2, grupo_bala_3)
     
-    def update_nivel_tres(self, pressed_keys, reinicia_nivel):
+    # def update_nivel_tres(self, pressed_keys, reinicia_nivel):
+    def update_nivel_tres(self, pressed_keys):
         self.pressed_keys = pressed_keys
         self.blit_fondo()
         self.nivel_3.dibujar_plataformas(self.pantalla)
@@ -114,9 +115,11 @@ class NivelActual(Niveles):
         bala_3.crear_bala((680,535),self.pantalla,grupo_bala_3)
         bala_3.animar(grupo_bala_3, True, False)
 
-        if (self.vidas_jefe >= 14) and reinicia_nivel == False:
+        # if (self.vidas_jefe >= 14) and reinicia_nivel == False:
+        if (self.vidas_jefe >= 14):
             grupo_jefe.update()
-        elif (self.vidas_jefe < 14 and self.vidas_jefe > 0 and reinicia_nivel == False) or (self.vidas_jefe > 0 and reinicia_nivel):
+        # elif (self.vidas_jefe < 14 and self.vidas_jefe > 0 and reinicia_nivel == False) or (self.vidas_jefe > 0 and reinicia_nivel):
+        elif (self.vidas_jefe < 14 and self.vidas_jefe > 0):
             lista_jefe[0].animar_salto(self.nivel_3)
         elif self.vidas_jefe == 0 and self.jefe_muerto == False:
             lista_jefe[0].rect.y += 62

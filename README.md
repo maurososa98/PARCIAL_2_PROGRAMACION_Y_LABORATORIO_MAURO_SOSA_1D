@@ -12,8 +12,6 @@
 
 ![Python](./imagenes/juego.png)
 
-## Descripción
+## :robot: Link video gameplay del juego
 
-<!-- ## :robot: Link video defensa del juego
-
-- [video]() -->
+- [video](https://youtu.be/9W1xw6k0OGg)
