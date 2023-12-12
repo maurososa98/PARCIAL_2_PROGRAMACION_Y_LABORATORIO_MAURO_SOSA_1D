@@ -126,7 +126,7 @@ class Heroe:
 
         self.animar_heroe()
 
-        return [self.fin_del_juego, self.cantidad_colisiones, self.cantidad_enemigos_eliminados, self.vidas_jefe]
+        return [self.fin_del_juego, self.cantidad_enemigos_eliminados, self.vidas_jefe]
 
     def colisiones_plataformas(self, nivel):
         self.esta_aire = True
@@ -226,8 +226,6 @@ class Heroe:
         imagen_vidas = pygame.image.load(f"imagenes/cantidad_vida/{vidas}.png")
         imagen_vidas = pygame.transform.scale(imagen_vidas, (86,31))
         pantalla.blit(imagen_vidas, (tamaño_pantalla[0] - 820, tamaño_pantalla[1] -40))
-
-
 
 class Proyectil(pygame.sprite.Sprite):
     def __init__(self):

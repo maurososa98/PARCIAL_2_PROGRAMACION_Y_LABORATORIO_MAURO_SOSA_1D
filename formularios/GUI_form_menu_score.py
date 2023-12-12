@@ -1,9 +1,9 @@
 import pygame
 from pygame.locals import *
 
-from UI.GUI_button_image import *
-from UI.GUI_form import *
-from UI.GUI_label import *
+from formularios.UI.GUI_button_image import *
+from formularios.UI.GUI_form import *
+from formularios.UI.GUI_label import *
 
         
 class FormMenuScore(Form):
@@ -18,16 +18,20 @@ class FormMenuScore(Form):
         self._margen_y = margen_y
         #Creo 2 labels y los agrego a la lista de widgets
         self.lista_widgets.append(
-            Label(screen=self._slave, x=margen_x+10,y=20,w=w/2-margen_x-10,h=50,text = "Jugador", font="Verdana",font_size=30,font_color=(255,255,255),path_image="Recursos\\bar.png"))
+            Label(screen=self._slave,
+                  x=margen_x+10,y=20,w=w/2-margen_x-10,
+                  h=50,text = "Puesto",
+                  font="Verdana",
+                  font_size=30,font_color=(255,255,255),path_image=r"formularios\Recursos\bar.png"))
         self.lista_widgets.append(
             Label(screen=self._slave,
-                 x=margen_x+10+w/2-margen_x-10,
-                 y=20,w=w/2-margen_x-10,
-                 h=50,text = "Puntaje",
-                font="Verdana",
-                font_size=30,
-                font_color=(255,255,255),
-                path_image="Recursos\\bar.png"))
+                  x=margen_x+10+w/2-margen_x-10,
+                  y=20,w=w/2-margen_x-10,
+                  h=50,text = "Puntaje",
+                  font="Verdana",
+                  font_size=30,
+                  font_color=(255,255,255),
+                  path_image=r"formularios\Recursos\bar.png"))
         
         pos_inicial_y = margen_y
         
@@ -40,17 +44,14 @@ class FormMenuScore(Form):
                 cadena = "" 
                 cadena = f"{s}"
                 pos = Label(screen=self._slave, x=pos_inicial_x,y=pos_inicial_y,
-                            w=w/2-margen_x,h=100,text = cadena, font="Verdana",font_size=30,
-                            font_color=(255,255,255),path_image="Recursos\Table.png")
+                            w=w/2-margen_x,h=80,text = cadena, font="Verdana",font_size=30,
+                            font_color=(255,255,255),path_image="formularios\Recursos\Table.png")
                 self.lista_widgets.append(pos)
                 pos_inicial_x += w/2-margen_x
                 
             pos_inicial_y+=100 + espacio
-                
-        
-        
-        #Crear boton home
-        self.boton_home = Button_Image(screen = self._slave, master_x = x, master_y = y, x = w -70, y = h -70, w = 50, h = 50, path_image= "Recursos\home.png", onclick= self.btn_home_click, onclick_param="")
+
+        self.boton_home = Button_Image(screen = self._slave, master_x = x, master_y = y, x = w -70, y = h -60, w = 40, h = 40, path_image= "formularios\Recursos\home.png", onclick= self.btn_home_click, onclick_param="")
 
         self.lista_widgets.append(self.boton_home)
         

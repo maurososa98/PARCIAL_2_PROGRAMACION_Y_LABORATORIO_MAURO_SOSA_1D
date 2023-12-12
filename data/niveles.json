@@ -1,0 +1,16 @@
+{
+  "lista_preguntas_respuestas": [
+    {
+      "premio": 50000,
+      "pregunta": "\u00bfCu\u00e1l es la capital de Francia?",
+      "respuesta_correcta": "Par\u00eds",
+      "opciones": ["Madrid", "Roma", "Par\u00eds", "Berl\u00edn"]
+    },
+    {
+      "premio": 50000,
+      "pregunta": "\u00bfCu\u00e1l es el color del cielo en un d\u00eda despejado?",
+      "respuesta_correcta": "Celeste",
+      "opciones": ["Celeste", "Rojo", "Amarillo", "Verde"]
+    }
+  ]
+}

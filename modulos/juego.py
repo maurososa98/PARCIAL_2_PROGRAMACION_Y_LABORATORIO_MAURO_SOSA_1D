@@ -1,122 +1,52 @@
 from modulos.objetos_en_pantalla.clase_heroe import *
-from modulos.objetos_en_pantalla.clase_nivel import *
+from modulos.objetos_en_pantalla.clase_creador_nivel import *
 from modulos.objetos_en_pantalla.clase_enemigo import *
 from modulos.objetos_en_pantalla.clase_jefe import *
 from modulos.objetos_en_pantalla.clase_bala import *
-from modulos.objetos_en_pantalla.class_formulario import *
+from modulos.objetos_en_pantalla.clase_nivel_actual import *
 from modulos.valores.colores import *
 from modulos.valores.niveles import *
 from modulos.configuracion import *
 from modulos.funciones import *
+from formularios.GUI_form_inicio import *
 import pygame
-
-# HEROE -----------------------------------------------------
-escala_heroe = (38,50)
-lista_camina_derecha = lista_imagenes("imagenes/spiderman/camina/0.png",11,escala_heroe)
-lista_camina_izquierda = lista_imagenes("imagenes/spiderman/camina/0.png",11,escala_heroe,True)
-
-lista_camina_derecha_poder = lista_imagenes("imagenes/spiderman_poder/camina/0.png",8,escala_heroe)
-lista_camina_izquierda_poder = lista_imagenes("imagenes/spiderman_poder/camina/0.png",8,escala_heroe,True)
-
-# MUSICA -----------------------------------------------------
-musica_pausa = "musica/menu_pausa.mp3"
-musica_nivel_1 = "musica/nivel_1.mp3"
-musica_nivel_2 = "musica/nivel_2.mp3"
-musica_nivel_3 = "musica/nivel_3.mp3"
-
-nivel_1 = Nivel(datos_nivel_1, 55)
-nivel_1.rellenar_diccionario_nivel("imagenes/fondo/piso.png",
-                                   "imagenes/fondo/plataforma.png",
-                                   "imagenes/fondo/plataforma_edificio.png",
-                                   "imagenes/trampa/trampa_piso.png",
-                                   "imagenes/trampa/trampa_pared.png",
-                                   "imagenes/trampa/trampa_techo.png",1)
-
-nivel_2 = Nivel(datos_nivel_2, 55)
-nivel_2.rellenar_diccionario_nivel("imagenes/fondo/piso.png",
-                                   "imagenes/fondo/plataforma.png",
-                                   "imagenes/fondo/plataforma_edificio.png",
-                                   "imagenes/trampa/trampa_piso.png",
-                                   "imagenes/trampa/trampa_pared.png",
-                                   "imagenes/trampa/trampa_techo.png",2)
-
-nivel_3 = Nivel(datos_nivel_3, 55)
-nivel_3.rellenar_diccionario_nivel("imagenes/fondo/piso.png",
-                                   "imagenes/fondo/plataforma.png",
-                                   "imagenes/fondo/plataforma_edificio.png",
-                                   "imagenes/trampa/trampa_piso.png",
-                                   "imagenes/trampa/trampa_pared.png",
-                                   "imagenes/trampa/trampa_techo.png",3)
-
-grupo_bala_1 = pygame.sprite.Group()
-bala_1 = CreadorBalas()
-
-grupo_bala_2 = pygame.sprite.Group()
-bala_2 = CreadorBalas()
-
-grupo_bala_3 = pygame.sprite.Group()
-bala_3 = CreadorBalas()
-
-lista_imagenes_salida = lista_imagenes("imagenes/salida/0.png", 12, (45,45))
-
-fondo_menu_pausa = "imagenes/fondo/menu_pausa.png"
-fondo_nivel_1 = "imagenes/fondo/fondo_1.png"
-fondo_nivel_2 = "imagenes/fondo/fondo_2.png"
-fondo_nivel_3 = "imagenes/fondo/fondo_3.png"
-
-musica_menu_pausa = "musica/menu_pausa.mp3"
-musica_nivel_1 = "musica/nivel_1.mp3"
-musica_nivel_2 = "musica/nivel_2.mp3"
-musica_nivel_3 = "musica/nivel_3.mp3"
-
 
 class Juego(Configuracion):
     def __init__(self, tamaño_pantalla: tuple, FPS: int, titulo_pantalla: str, icono: str, imagen_fondo: str, fuente: str, musica: str):
-        super().__init__(tamaño_pantalla, FPS, titulo_pantalla, icono, imagen_fondo, fuente, musica)
+        super().__init__(tamaño_pantalla, FPS, titulo_pantalla, icono, imagen_fondo, fuente)
         self.bandera_menu_principal = True
         self.bandera_nivel_1 = False
+        self.paso_nivel_1 = False
+
         self.bandera_nivel_2 = False
+        self.paso_nivel_2 = False
+
         self.bandera_nivel_3 = False
-        self.bandera_menu_pausa = False
+        self.paso_nivel_3 = False
 
-        self.set_heroe()
-        self.pressed_keys = []
-        self.fin_juego = 1
-        self.cant_colisiones = 0
-        self.datos = 0
-        
+        self.musica = musica
+
         self.puntos = 0
-        self.sonido_puntos = pygame.mixer.Sound(("musica/punto.wav"))
-
         self.vidas_spiderman = 3
-        self.vidas_jefe = 28
-        self.jefe_muerto = False
-        
-        self.sonido_vidas = pygame.mixer.Sound(("musica/vida.wav"))
-        self.sonido_reta_vida = pygame.mixer.Sound(("musica/resta_vida.wav"))
-        self.sonido_enemigo_golpeado = pygame.mixer.Sound(("musica/enemigo_golpeado.wav"))
-        self.cant_enemigos_eliminados = 0
-        
-        #-------------- TIEMPO --------------------------------------------------------------------
+
         self.INICIA_CONTADOR = pygame.USEREVENT
         pygame.time.set_timer(self.INICIA_CONTADOR, 1000) # temposrizador
         self.contador_tiempo = 60
 
-    def set_heroe(self):
-        posicion_inicial_x = 55
-        posicion_inicial_y = 0
-        self.heroe = Heroe(lista_camina_derecha,lista_camina_izquierda,(posicion_inicial_x,posicion_inicial_y),6,self.PANTALLA,self.tamaño_pantalla[0])
+        self.pressed_keys = None
+        self.fin_juego = 1
+        self.reinicia_nivel = False
+        self.sumar_puntos_enemigos_eliminados = False
 
-    def mover_heroe(self, nivel, grupo_enemigos, grupo_salida, grupo_balas_1, grupo_balas_2, grupo_balas_3, grupo_jefe= []):
-        datos = self.heroe.mover(self.pressed_keys, nivel, grupo_enemigos, grupo_salida, grupo_balas_1, grupo_balas_2, grupo_balas_3, grupo_jefe)
-        self.fin_juego = datos[0]
-        self.cant_colisiones = datos[1]
-        self.cant_enemigos_eliminados = datos[2]
-        self.vidas_jefe = datos[3]
+        self.nivel = NivelActual(fondo_nivel_1, self.PANTALLA, self.tamaño_pantalla)
+        self.form_inicio = FormInicio(self.PANTALLA, 0, 0, 880, 660, "blue", "black", r"imagenes\fondo\menu_principal.png", self.musica)
+        
+        imagen_game_over = pygame.image.load("imagenes/game_over.png")
+        self.imagen_game_over = pygame.transform.scale(imagen_game_over, (520,390))
+        self.bandera_game_over = False
 
-    def blit_fondo(self):
-        self.PANTALLA.blit(self.fondo,(0,0))
-        self.PANTALLA.get_width()
+        imagen_juego_ganado = pygame.image.load("imagenes/juego_ganado.png")
+        self.imagen_juego_ganado = pygame.transform.scale(imagen_juego_ganado, (425,440))
 
     def texto_en_pantalla(self, texto, color, x, y):
         texto_en_pantalla = self.fuente.render(texto, True, color)
@@ -126,198 +56,218 @@ class Juego(Configuracion):
         pygame.init()
         while self.bandera_iniciar:
             self.reloj.tick(self.FPS)
+            eventos = pygame.event.get()
+            self.pressed_keys = pygame.key.get_pressed()
+
+            self.puntos = self.nivel.puntos
+            self.vidas_spiderman = self.nivel.vidas_spiderman
 
             if self.bandera_menu_principal:
-                self.blit_fondo()
+                self.contador_tiempo = 60
+                fondo = pygame.image.load(fondo_menu_principal)
+                self.fondo = pygame.transform.scale(fondo, self.tamaño_pantalla)
+                self.PANTALLA.blit(self.fondo,(0,0))
+                self.form_inicio.update(eventos)
+
+                if self.form_inicio.nivel_seleccionado() == "1":
+                    self.contador_tiempo = 60
+                    self.bandera_menu_principal = False
+                    self.bandera_nivel_1 = True
+                    self.bandera_nivel_2 = False
+                    self.bandera_nivel_3 = False
+                    self.nivel.heroe.rect.x = 55
+                    self.nivel.heroe.rect.y = 554
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(musica_nivel_1)
+                    pygame.mixer.music.play(-1)
+                    self.nivel.set_imagen_fondo(fondo_nivel_1)
+                elif self.form_inicio.nivel_seleccionado() == "2" and self.paso_nivel_1:
+                    self.contador_tiempo = 60
+                    self.bandera_menu_principal = False
+                    self.bandera_nivel_1 = False
+                    self.bandera_nivel_2 = True
+                    self.bandera_nivel_3 = False
+                    self.nivel.heroe.rect.x = 55
+                    self.nivel.heroe.rect.y = 554
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(musica_nivel_2)
+                    pygame.mixer.music.play(-1)
+                    self.nivel.set_imagen_fondo(fondo_nivel_2)
+                elif self.form_inicio.nivel_seleccionado() == "3" and self.paso_nivel_2:
+                    self.contador_tiempo = 60
+                    self.bandera_menu_principal = False
+                    self.bandera_nivel_1 = False
+                    self.bandera_nivel_2 = False
+                    self.bandera_nivel_3 = True
+                    self.nivel.heroe.rect.x = 55
+                    self.nivel.heroe.rect.y = 554
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(musica_nivel_3)
+                    pygame.mixer.music.play(-1)
+                    self.nivel.set_imagen_fondo(fondo_nivel_3)
 
             if self.bandera_nivel_1:
-                self.blit_fondo()
-                nivel_1.dibujar_plataformas(self.PANTALLA)
-
-                grupo_enemigos_nivel_1.update()
-                grupo_puntos_nivel_1.update()
-                grupo_vidas_nivel_1.update()
-                grupo_salida_nivel_1.update()
-
-                grupo_enemigos_nivel_1.draw(self.PANTALLA)
-                grupo_puntos_nivel_1.draw(self.PANTALLA)
-                grupo_vidas_nivel_1.draw(self.PANTALLA)
-                grupo_salida_nivel_1.draw(self.PANTALLA)
-                
-                bala_1.crear_bala((190,425),self.PANTALLA,grupo_bala_1)
-                bala_1.animar(grupo_bala_1, True, False)
-                
-                bala_2.crear_bala((405,270),self.PANTALLA,grupo_bala_2)
-                bala_2.animar(grupo_bala_2, True, False)
-
-                bala_3.crear_bala((625,535),self.PANTALLA,grupo_bala_3)
-                bala_3.animar(grupo_bala_3, True, False)
-
-                self.get_pressed()
-                self.mover_heroe(nivel_1, grupo_enemigos_nivel_1, grupo_salida_nivel_1,grupo_bala_1, grupo_bala_2, grupo_bala_3)
-                self.recolectar_puntos(grupo_puntos_nivel_1)
-                self.recolectar_vidas(grupo_vidas_nivel_1)
-                self.registro_colisiones(grupo_enemigos_nivel_1, grupo_bala_1, grupo_bala_2, grupo_bala_3)
+                if self.contador_tiempo > 0:
+                    self.nivel.update_nivel_uno(self.pressed_keys)
+                    self.fin_juego = self.nivel.registro_nivel()
+                if self.contador_tiempo <= 0 or self.fin_juego == 0:
+                    self.PANTALLA.blit(self.imagen_game_over, (180,135))
+                    self.bandera_game_over = True
 
                 if self.fin_juego == 2:
+                    self.paso_nivel_1 = True
                     self.contador_tiempo = 60
                     self.bandera_nivel_1 = False
                     self.bandera_nivel_2 = True
-                    self.heroe.rect.x = 55
-                    self.heroe.rect.y = 554
-                    self.set_imagen_fondo(fondo_nivel_2)
-                    self.parar_musica()
-                    self.set_musica(musica_nivel_2)
-                    self.reproducir_musica()
+                    self.nivel.heroe.rect.x = 55
+                    self.nivel.heroe.rect.y = 554
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(musica_nivel_2)
+                    pygame.mixer.music.play(-1)
+                    self.nivel.set_imagen_fondo(fondo_nivel_2)
 
             if self.bandera_nivel_2:
-                self.blit_fondo()
-                nivel_2.dibujar_plataformas(self.PANTALLA)
-                
-                grupo_enemigos_nivel_2.update()
-                grupo_puntos_nivel_2.update()
-                grupo_vidas_nivel_2.update()
-                grupo_salida_nivel_2.update()
-                
-                grupo_enemigos_nivel_2.draw(self.PANTALLA)
-                grupo_puntos_nivel_2.draw(self.PANTALLA)
-                grupo_vidas_nivel_2.draw(self.PANTALLA)
-                grupo_salida_nivel_2.draw(self.PANTALLA)
-                
-                bala_1.crear_bala((350,550),self.PANTALLA,grupo_bala_1)
-                bala_1.animar(grupo_bala_1, True, False)
-                
-                bala_2.crear_bala((535,350),self.PANTALLA,grupo_bala_2)
-                bala_2.animar(grupo_bala_2, False, True)
-
-                bala_3.crear_bala((55,130),self.PANTALLA,grupo_bala_3)
-                bala_3.animar(grupo_bala_3, False, True)
-
-                self.get_pressed()
-                self.mover_heroe(nivel_2, grupo_enemigos_nivel_2, grupo_salida_nivel_2,grupo_bala_1, grupo_bala_2, grupo_bala_3)
-                self.recolectar_puntos(grupo_puntos_nivel_2)
-                self.recolectar_vidas(grupo_vidas_nivel_2)
-                self.registro_colisiones(grupo_enemigos_nivel_2, grupo_bala_1, grupo_bala_2, grupo_bala_3)
+                if self.contador_tiempo > 0:
+                    self.nivel.update_nivel_dos(self.pressed_keys)
+                    self.fin_juego = self.nivel.registro_nivel()
+                if self.contador_tiempo <= 0 or self.fin_juego == 0:
+                    self.PANTALLA.blit(self.imagen_game_over, (180,135))
+                    self.bandera_game_over = True
 
                 if self.fin_juego == 3:
+                    self.paso_nivel_2 = True
                     self.contador_tiempo = 60
                     self.bandera_nivel_2 = False
                     self.bandera_nivel_3 = True
-                    self.heroe.rect.x = 55
-                    self.heroe.rect.y = 554
-                    self.set_imagen_fondo(fondo_nivel_3)
-                    self.parar_musica()
-                    self.set_musica(musica_nivel_3)
-                    self.reproducir_musica()
+                    self.nivel.heroe.rect.x = 55
+                    self.nivel.heroe.rect.y = 554
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(musica_nivel_3)
+                    pygame.mixer.music.play(-1)
+                    self.nivel.set_imagen_fondo(fondo_nivel_3)
 
             if self.bandera_nivel_3:
-                self.blit_fondo()
-                nivel_3.dibujar_plataformas(self.PANTALLA)
-
-                grupo_enemigos_nivel_3.update()
-                grupo_puntos_nivel_3.update()
-                grupo_vidas_nivel_3.update()
-                grupo_salida_nivel_3.update()
-                
-                grupo_enemigos_nivel_3.draw(self.PANTALLA)
-                grupo_puntos_nivel_3.draw(self.PANTALLA)
-                grupo_vidas_nivel_3.draw(self.PANTALLA)
-                grupo_salida_nivel_3.draw(self.PANTALLA)
-                grupo_jefe.draw(self.PANTALLA)
-
-                bala_1.crear_bala((55,195),self.PANTALLA,grupo_bala_1)
-                bala_1.animar(grupo_bala_1, False, True)
-
-                bala_2.crear_bala((185,535),self.PANTALLA,grupo_bala_2)
-                bala_2.animar(grupo_bala_2, True, False)
-                
-                bala_3.crear_bala((680,535),self.PANTALLA,grupo_bala_3)
-                bala_3.animar(grupo_bala_3, True, False)
-
-                if self.vidas_jefe >= 14:
-                    grupo_jefe.update()
-                elif self.vidas_jefe < 14 and self.vidas_jefe > 0:
-                    lista_jefe[0].animar_salto(nivel_3)
-                elif self.vidas_jefe == 0 and self.jefe_muerto == False:
-                    self.jefe_muerto = True
-                    lista_jefe[0].rect.y += 62
-                    lista_jefe[0].image = pygame.image.load("imagenes/venom/muere/6.png")
-                    
-                lista_jefe[0].vidas_en_pantalla(self.PANTALLA, self.tamaño_pantalla, self.vidas_jefe)
-
-                self.get_pressed()
-                self.mover_heroe(nivel_3, grupo_enemigos_nivel_3, grupo_salida_nivel_3,grupo_bala_1, grupo_bala_2, grupo_bala_3,grupo_jefe)
-                self.recolectar_puntos(grupo_puntos_nivel_3)
-                self.recolectar_vidas(grupo_vidas_nivel_3)
-                self.registro_colisiones(grupo_enemigos_nivel_3, grupo_bala_1, grupo_bala_2, grupo_bala_3,grupo_jefe)
-
-            if self.bandera_menu_pausa:
-                pass
+                if self.nivel.jefe_muerto == False:
+                    if self.contador_tiempo > 0:
+                        self.nivel.update_nivel_tres(self.pressed_keys, self.reinicia_nivel)
+                        self.fin_juego = self.nivel.registro_nivel()
+                    if self.contador_tiempo <= 0 or self.fin_juego == 0:
+                        self.PANTALLA.blit(self.imagen_game_over, (180,135))
+                        self.bandera_game_over = True
+                else:
+                    # if self.sumar_puntos_enemigos_eliminados == False:
+                    #     print("HolaaAAAAAAAAAAAAAAAA")
+                    #     self.puntos += self.nivel.cant_enemigos_eliminados * 100
+                    #     self.sumar_puntos_enemigos_eliminados = True
+                    self.paso_nivel_3 = True
+                    grupo_jefe.draw(self.PANTALLA)
+                    self.PANTALLA.blit(self.imagen_juego_ganado, (227,0))
+                    self.bandera_game_over = True
+                    self.texto_en_pantalla(f"{self.puntos}", NEGRO,410,200)
 
             self.texto_en_pantalla(f"PUNTOS: {self.puntos}", NEGRO, self.tamaño_pantalla[0] - 200, self.tamaño_pantalla[1] -35)
-            self.heroe.vidas_en_pantalla(self.PANTALLA, self.tamaño_pantalla, self.vidas_spiderman)
-            
+
+            self.nivel.heroe.vidas_en_pantalla(self.PANTALLA, self.tamaño_pantalla, self.vidas_spiderman)
+
             pygame.draw.circle(self.PANTALLA, ROJO, (440,635), 20)
             texto_contador_tiempo = self.fuente.render(f"{(self.contador_tiempo):.0f}",False,BLANCO)
             self.PANTALLA.blit(texto_contador_tiempo, (430,625))
 
-            for evento in pygame.event.get():
+            for evento in eventos:
                 if evento.type == pygame.QUIT:
                     self.bandera_iniciar = False
-             
+                elif (evento.type == self.INICIA_CONTADOR and (self.bandera_nivel_1 or self.bandera_nivel_2 or self.bandera_nivel_3) and self.bandera_game_over == False):
+                    if self.contador_tiempo >= -1:
+                        self.contador_tiempo -= 1
                 elif evento.type == pygame.KEYDOWN:
                     nombre = pygame.key.name(evento.key) 
-                    if nombre == "return": # ENTER
-                        # tiempo_inicial = pygame.time.get_ticks()
-                        self.bandera_menu_principal = False
-                        self.bandera_nivel_1 = True
-                        self.heroe.rect.x = 55
-                        self.heroe.rect.y = 554
-                        self.set_imagen_fondo(fondo_nivel_1)
-                        self.parar_musica()
-                        self.set_musica(musica_nivel_1)
-                        self.reproducir_musica()
-                elif (evento.type == self.INICIA_CONTADOR and (self.bandera_nivel_1 or self.bandera_nivel_2 or self.bandera_nivel_3)):
-                        self.contador_tiempo -= 1
+                    if (nombre == "return" and self.bandera_game_over) and self.paso_nivel_3 == False:# reset si pierde en nivel 1 - 2 - 3
+                        self.reset_valores()
+
+                    if (nombre == "return" and self.bandera_game_over) and self.paso_nivel_3:# reset si gana el nivel 3
+                        # CARGA DE DATOS CSV: ------------------------
+                        try:
+                            with open("data/registro_partidas.csv","a") as archivo:
+                                fila_dato = f"{self.puntos}\n"
+                                archivo.write(fila_dato)
+                        except PermissionError:
+                            print("ERROR, el archivo de registro de partidas se encuentra abierto.")
+                        except Exception as ex:
+                            print(f"ERROR, se produjo un error del tipo: {type(ex)}")
+                        # --------------------------------------------
+
+                        self.paso_nivel_1 = False
+                        self.paso_nivel_2 = False
+                        self.paso_nivel_3 = False
+                        self.nivel.jefe_muerto = False
+                        
+                        self.reset_valores()
             pygame.display.flip()
         pygame.quit()
+    
+    def eliminar_objetos_nivel(self):
+        pygame.sprite.Group.empty(grupo_enemigos_nivel_1)
+        pygame.sprite.Group.empty(grupo_vidas_nivel_1)
+        pygame.sprite.Group.empty(grupo_puntos_nivel_1)
+        pygame.sprite.Group.empty(grupo_salida_nivel_1)
+        self.nivel.nivel_1.eliminar_plataformas()
+        
+        pygame.sprite.Group.empty(grupo_enemigos_nivel_2)
+        pygame.sprite.Group.empty(grupo_vidas_nivel_2)
+        pygame.sprite.Group.empty(grupo_puntos_nivel_2)
+        pygame.sprite.Group.empty(grupo_salida_nivel_2)
+        self.nivel.nivel_2.eliminar_plataformas()
+        
+        pygame.sprite.Group.empty(grupo_enemigos_nivel_3)
+        pygame.sprite.Group.empty(grupo_vidas_nivel_3)
+        pygame.sprite.Group.empty(grupo_puntos_nivel_3)
+        pygame.sprite.Group.empty(grupo_salida_nivel_3)
+        pygame.sprite.Group.empty(grupo_jefe)
+        lista_jefe.clear()
+        self.nivel.nivel_3.eliminar_plataformas()
+    
+    def rellenar_objetos_nivel(self):
+        self.nivel.nivel_1.rellenar_diccionario_nivel("imagenes/fondo/piso.png",
+                                        "imagenes/fondo/plataforma.png",
+                                        "imagenes/fondo/plataforma_edificio.png",
+                                        "imagenes/trampa/trampa_piso.png",
+                                        "imagenes/trampa/trampa_pared.png",
+                                        "imagenes/trampa/trampa_techo.png",1)
+        self.nivel.nivel_2.rellenar_diccionario_nivel("imagenes/fondo/piso.png",
+                                        "imagenes/fondo/plataforma.png",
+                                        "imagenes/fondo/plataforma_edificio.png",
+                                        "imagenes/trampa/trampa_piso.png",
+                                        "imagenes/trampa/trampa_pared.png",
+                                        "imagenes/trampa/trampa_techo.png",2)
+        self.nivel.nivel_3.rellenar_diccionario_nivel("imagenes/fondo/piso.png",
+                                        "imagenes/fondo/plataforma.png",
+                                        "imagenes/fondo/plataforma_edificio.png",
+                                        "imagenes/trampa/trampa_piso.png",
+                                        "imagenes/trampa/trampa_pared.png",
+                                        "imagenes/trampa/trampa_techo.png",3)
+    
+    def reset_valores(self):
+        self.nivel.cant_enemigos_eliminados = 0
+        self.nivel.heroe.cantidad_colisiones = 0
+        self.nivel.heroe.fin_del_juego = 1
+        self.nivel.vidas_spiderman = 3
+        self.reinicia_nivel = True
+        self.nivel.heroe.vidas_jefe = 28
 
-    def get_pressed(self):
-        self.pressed_keys = pygame.key.get_pressed()
+        self.nivel.puntos = 0
+        self.bandera_menu_principal = True
+        self.bandera_nivel_1 = False
+        self.bandera_nivel_2 = False
+        self.bandera_nivel_3 = False
+        self.form_inicio.form_comenzar_juego.seleccion_nivel = "0"
+        self.bandera_game_over = False
 
-    def recolectar_puntos(self, grupo_puntos_nivel):
-        if self.fin_juego >= 1:
-            if (pygame.sprite.spritecollide(self.heroe,grupo_puntos_nivel,True)):
-                self.puntos += 100
-                self.sonido_puntos.play()
-                self.sonido_puntos.set_volume(0.2)
+        self.eliminar_objetos_nivel()
+        self.rellenar_objetos_nivel()
 
-    def recolectar_vidas(self, grupo_vidas_nivel):
-        if self.fin_juego >= 1:
-            if pygame.sprite.spritecollide(self.heroe,grupo_vidas_nivel,True):
-                self.sonido_vidas.play()
-                self.sonido_vidas.set_volume(0.2)
-                self.vidas_spiderman += 1
-                if self.vidas_spiderman > 3:
-                    self.vidas_spiderman = 3
 
-    def registro_colisiones(self, grupo_enemigos_nivel, grupo_balas_1, grupo_balas_2, grupo_balas_3, grupo_jefe=[]):
-        if (pygame.sprite.spritecollide(self.heroe,grupo_enemigos_nivel,False) or 
-            pygame.sprite.spritecollide(self.heroe,grupo_balas_1,False) or
-            pygame.sprite.spritecollide(self.heroe,grupo_balas_2,False) or
-            pygame.sprite.spritecollide(self.heroe,grupo_balas_3,False) or
-            pygame.sprite.spritecollide(self.heroe,grupo_jefe,False)):
-            self.sonido_reta_vida.play()
-            self.sonido_reta_vida.set_volume(0.2)
-            self.vidas_spiderman -= 1
-            if self.vidas_spiderman <= 0:
-                self.vidas_spiderman = 0
-                self.puntos += self.cant_enemigos_eliminados * 100
-            else:
-                self.heroe.rect.x = 55
-                self.heroe.rect.y = 554
-                self.sonido_reta_vida.play()
-                self.sonido_reta_vida.set_volume(0.2)
+
+
 
 
 

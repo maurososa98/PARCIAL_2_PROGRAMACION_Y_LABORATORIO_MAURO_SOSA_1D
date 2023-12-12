@@ -51,7 +51,29 @@ grupo_enemigos_nivel_1 = pygame.sprite.Group()
 grupo_enemigos_nivel_2 = pygame.sprite.Group()
 grupo_enemigos_nivel_3 = pygame.sprite.Group()
 
+# HEROE -----------------------------------------------------
+escala_heroe = (38,50)
+lista_camina_derecha = lista_imagenes("imagenes/spiderman/camina/0.png",11,escala_heroe)
+lista_camina_izquierda = lista_imagenes("imagenes/spiderman/camina/0.png",11,escala_heroe,True)
 
+lista_camina_derecha_poder = lista_imagenes("imagenes/spiderman_poder/camina/0.png",8,escala_heroe)
+lista_camina_izquierda_poder = lista_imagenes("imagenes/spiderman_poder/camina/0.png",8,escala_heroe,True)
+
+# MUSICA -----------------------------------------------------
+musica_menu_inicial = "musica/menu_inicial.mp3"
+musica_menu_pausa = "musica/menu_pausa.mp3"
+musica_nivel_1 = "musica/nivel_1.mp3"
+musica_nivel_2 = "musica/nivel_2.mp3"
+musica_nivel_3 = "musica/nivel_3.mp3"
+
+
+lista_imagenes_salida = lista_imagenes("imagenes/salida/0.png", 12, (45,45))
+
+fondo_menu_principal = "imagenes/fondo/menu_principal.png"
+fondo_menu_pausa = "imagenes/fondo/menu_pausa.png"
+fondo_nivel_1 = "imagenes/fondo/fondo_1.png"
+fondo_nivel_2 = "imagenes/fondo/fondo_2.png"
+fondo_nivel_3 = "imagenes/fondo/fondo_3.png"
 
 
 

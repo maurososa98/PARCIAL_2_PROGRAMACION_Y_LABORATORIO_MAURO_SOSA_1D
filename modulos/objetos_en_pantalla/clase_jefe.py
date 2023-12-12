@@ -13,6 +13,7 @@ class Jefe(Enemigo):
         self.height = self.image.get_height()
 
         self.desplazamiento_y = 0
+        self.desplazamiento_X = 0
         self.contador_salto = 0
 
         self.velocidad_salto = 0

@@ -1,5 +1,5 @@
 import pygame
-from modulos.objetos_en_pantalla.clase_nivel import *
+from modulos.objetos_en_pantalla.clase_creador_nivel import *
 from modulos.objetos_en_pantalla.clase_objeto  import *
 
 class Bala(pygame.sprite.Sprite):
@@ -12,6 +12,7 @@ class Bala(pygame.sprite.Sprite):
 
 class CreadorBalas():
     def __init__(self):
+        pygame.mixer.init()
         self.ultimo_disparo = pygame.time.get_ticks()
         self.sonido_disparo = pygame.mixer.Sound(("musica/trampa_dispara.mp3"))
         self.bala = None
@@ -42,4 +43,12 @@ class CreadorBalas():
                 pygame.sprite.Sprite.kill(lista_balas[i])
     
 
+grupo_bala_1 = pygame.sprite.Group()
+bala_1 = CreadorBalas()
+
+grupo_bala_2 = pygame.sprite.Group()
+bala_2 = CreadorBalas()
+
+grupo_bala_3 = pygame.sprite.Group()
+bala_3 = CreadorBalas()
 

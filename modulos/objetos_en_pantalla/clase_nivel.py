@@ -1,170 +1,95 @@
+from modulos.objetos_en_pantalla.clase_heroe import *
+
 import pygame
-from modulos.objetos_en_pantalla.clase_enemigo  import *
-from modulos.objetos_en_pantalla.clase_jefe  import *
-from modulos.objetos_en_pantalla.clase_objeto  import *
-from modulos.funciones import *
 
-class Nivel():
-    def __init__(self, datos_nivel:list, tamaño_cuadricula:int):
-        pygame.mixer.init()
-        self.datos_nivel = datos_nivel
-        self.tamaño_cuadricula = tamaño_cuadricula
-        self.lista_img_rect = []
-        self.indice = 0
-        self.contador = 0
+class Niveles():
+    def __init__(self, imagen_fondo, pantalla, tamaño_pantalla):
+        self.bandera_menu_principal = True
+        self.bandera_nivel_1 = False
+        self.bandera_nivel_2 = False
+        self.bandera_nivel_3 = False
+        self.bandera_menu_pausa = False
 
-    def rellenar_diccionario_nivel(self, 
-                                   ruta_1_piso:str, 
-                                   ruta_2_plataforma:str, 
-                                   ruta_3_plataforma:str, 
-                                   ruta_4_trampa_piso:str, 
-                                   ruta_5_trampa_pared:str,
-                                   ruta_6_trampa_techo:str, nivel:int=0):
-        self.ruta_1_piso = pygame.image.load(ruta_1_piso)
-        self.ruta_2_plataforma = pygame.image.load(ruta_2_plataforma)
-        self.ruta_3_plataforma = pygame.image.load(ruta_3_plataforma)
-        self.ruta_4_trampa_piso = pygame.image.load(ruta_4_trampa_piso)
-        self.ruta_5_trampa_pared = pygame.image.load(ruta_5_trampa_pared)
-        self.ruta_6_trampa_techo = pygame.image.load(ruta_6_trampa_techo)
+        self.pantalla = pantalla
+        self.tamaño_pantalla = tamaño_pantalla
 
-        contador_fila = 0
-        for fila in self.datos_nivel:
-            contador_columna = 0
-            for img in fila:
-                if img == 1:
-                    imagen_escalada = pygame.transform.scale(self.ruta_1_piso,(self.tamaño_cuadricula, self.tamaño_cuadricula))
-                    rectangulo_imagen = imagen_escalada.get_rect()
-                    rectangulo_imagen.x = contador_columna * self.tamaño_cuadricula
-                    rectangulo_imagen.y = contador_fila * self.tamaño_cuadricula
-                    img_rect = (imagen_escalada, rectangulo_imagen)
-                    self.lista_img_rect.append(img_rect)
-                if img == 2:
-                    imagen_escalada = pygame.transform.scale(self.ruta_2_plataforma,(self.tamaño_cuadricula, self.tamaño_cuadricula))
-                    rectangulo_imagen = imagen_escalada.get_rect()
-                    rectangulo_imagen.x = contador_columna * self.tamaño_cuadricula
-                    rectangulo_imagen.y = contador_fila * self.tamaño_cuadricula
-                    img_rect = (imagen_escalada, rectangulo_imagen)
-                    self.lista_img_rect.append(img_rect)
-                if img == 3:
-                    imagen_escalada = pygame.transform.scale(self.ruta_3_plataforma,(self.tamaño_cuadricula, self.tamaño_cuadricula))
-                    rectangulo_imagen = imagen_escalada.get_rect()
-                    rectangulo_imagen.x = contador_columna * self.tamaño_cuadricula
-                    rectangulo_imagen.y = contador_fila * self.tamaño_cuadricula
-                    img_rect = (imagen_escalada, rectangulo_imagen)
-                    self.lista_img_rect.append(img_rect)
-                if img == 4:
-                    imagen_escalada = pygame.transform.scale(self.ruta_4_trampa_piso,(self.tamaño_cuadricula, self.tamaño_cuadricula))
-                    rectangulo_imagen = imagen_escalada.get_rect()
-                    rectangulo_imagen.x = contador_columna * self.tamaño_cuadricula
-                    rectangulo_imagen.y = contador_fila * self.tamaño_cuadricula
-                    img_rect = (imagen_escalada, rectangulo_imagen)
-                    self.lista_img_rect.append(img_rect)
-                if img == 5:
-                    imagen_escalada = pygame.transform.scale(self.ruta_5_trampa_pared,(self.tamaño_cuadricula, self.tamaño_cuadricula))
-                    rectangulo_imagen = imagen_escalada.get_rect()
-                    rectangulo_imagen.x = contador_columna * self.tamaño_cuadricula
-                    rectangulo_imagen.y = contador_fila * self.tamaño_cuadricula
-                    img_rect = (imagen_escalada, rectangulo_imagen)
-                    self.lista_img_rect.append(img_rect)
-                if img == 6:
-                    imagen_escalada = pygame.transform.scale(self.ruta_6_trampa_techo,(self.tamaño_cuadricula, self.tamaño_cuadricula))
-                    rectangulo_imagen = imagen_escalada.get_rect()
-                    rectangulo_imagen.x = contador_columna * self.tamaño_cuadricula
-                    rectangulo_imagen.y = contador_fila * self.tamaño_cuadricula
-                    img_rect = (imagen_escalada, rectangulo_imagen)
-                    self.lista_img_rect.append(img_rect)
-                if img == 7:
-                    enemigo = Enemigo(contador_columna * self.tamaño_cuadricula, contador_fila * self.tamaño_cuadricula + 9,lista_imagenes_enemigo_venom_derecha,0.5,50,lista_imagenes_enemigo_venom_izquierda,lista_imagenes_enemigo_venom_derecha, 2)
-                    if nivel == 1:
-                        grupo_enemigos_nivel_1.add(enemigo)
-                    elif nivel == 2:
-                        grupo_enemigos_nivel_2.add(enemigo)
-                    elif nivel == 3:
-                        grupo_enemigos_nivel_3.add(enemigo)
+        self.pressed_keys = None
 
-                if img == 8:
-                    vida = ItemPunto(contador_columna * self.tamaño_cuadricula +16, contador_fila * self.tamaño_cuadricula +14, lista_imagenes_vida, 3)
-                    if nivel == 1:
-                        grupo_vidas_nivel_1.add(vida)
-                    elif nivel == 2:
-                        grupo_vidas_nivel_2.add(vida)
-                    elif nivel == 3:
-                        grupo_vidas_nivel_3.add(vida)
+        self.set_imagen_fondo(imagen_fondo)
 
-                if img == 9:
-                    punto = ItemVida(contador_columna * self.tamaño_cuadricula +22, contador_fila * self.tamaño_cuadricula +19, lista_imagenes_punto,3)
-                    if nivel == 1:
-                        grupo_puntos_nivel_1.add(punto)
-                    elif nivel == 2:
-                        grupo_puntos_nivel_2.add(punto)
-                    elif nivel == 3:
-                        grupo_puntos_nivel_3.add(punto)
+        self.set_heroe()
+        self.fin_juego = 1
 
-                if img == 10:
-                    jefe = Jefe(contador_columna * self.tamaño_cuadricula, contador_fila * self.tamaño_cuadricula -52, lista_imagenes_jefe_venom_derecha,2,65,lista_imagenes_jefe_venom_izquierda,lista_imagenes_jefe_venom_derecha,6)
-                    grupo_jefe.add(jefe)
-                    lista_jefe.append(jefe)
-                if img == 11:
-                    salida = Salida(contador_columna * self.tamaño_cuadricula, contador_fila * self.tamaño_cuadricula, lista_imagenes_salida,3)
-                    if nivel == 1:
-                        grupo_salida_nivel_1.add(salida)
-                    elif nivel == 2:
-                        grupo_salida_nivel_2.add(salida)
-                    elif nivel == 3:
-                        grupo_salida_nivel_3.add(salida)
+        self.puntos = 0
+        self.sonido_puntos = pygame.mixer.Sound(("musica/punto.wav"))
 
-                contador_columna += 1
-            contador_fila += 1
+        self.vidas_spiderman = 3
+        self.vidas_jefe = 28
+        self.jefe_muerto = False
 
-    def dibujar_plataformas(self, pantalla):
-        for i in range(len(self.lista_img_rect)):
-            img_rect = self.lista_img_rect[i]
-            pantalla.blit(img_rect[0],img_rect[1])
+        self.sonido_vidas = pygame.mixer.Sound(("musica/vida.wav"))
+        self.sonido_resta_vida = pygame.mixer.Sound(("musica/resta_vida.wav"))
+        self.sonido_enemigo_golpeado = pygame.mixer.Sound(("musica/enemigo_golpeado.wav"))
+        self.cant_enemigos_eliminados = 0
 
-class Bala(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(r"imagenes\trampa\trampa_disparo.png")
-        self.rect = self.image.get_rect()
-        self.velocidad = 5
-        self.ultimo_disparo = pygame.time.get_ticks()
-        self.sonido_disparo = pygame.mixer.Sound(("musica/trampa_dispara.mp3"))
+    def set_heroe(self):
+        posicion_inicial_x = 55
+        posicion_inicial_y = 600
+        self.heroe = Heroe(lista_camina_derecha,lista_camina_izquierda,(posicion_inicial_x,posicion_inicial_y),6,self.pantalla,self.tamaño_pantalla[0])
 
-    def trayectoria(self, arriba:bool=True, derecha:bool=False):
-        if arriba:
-            self.rect.bottom -= self.velocidad
-        if derecha:
-            self.rect.left += self.velocidad
-            self.imagen = pygame.transform.rotate(pygame.image.load(r"imagenes\trampa\trampa_disparo.png"), 270)
-    
-    def crear_bala(self, posicion:tuple):
-        calculo = pygame.time.get_ticks()
-        if calculo - self.ultimo_disparo > 700 and len(grupo_balas) < 1:
-            bala = Bala()
-            bala.rect.x = posicion[0]
-            bala.rect.y = posicion[1]
-            grupo_balas.add(bala)
-            self.sonido_disparo.play()
-            self.sonido_disparo.set_volume(0.01)
-            self.ultimo_disparo = calculo
-    
-    def dibujar_bala(self, pantalla, ancho_pantalla, trayectoria_derecha:bool=False):
-        for i in range(len(self.grupo_balas)):
-            if trayectoria_derecha:
-                self.grupo_balas[i].trayectoria(False,True)
+    def mover_heroe(self, nivel, grupo_enemigos, grupo_salida, grupo_balas_1, grupo_balas_2, grupo_balas_3, grupo_jefe= []):
+        datos = self.heroe.mover(self.pressed_keys, nivel, grupo_enemigos, grupo_salida, grupo_balas_1, grupo_balas_2, grupo_balas_3, grupo_jefe)
+        self.fin_juego = datos[0]
+        self.cant_enemigos_eliminados = datos[1]
+        self.vidas_jefe = datos[2]
+
+    def set_imagen_fondo(self, imagen_fondo):
+        fondo = pygame.image.load(imagen_fondo)
+        self.fondo = pygame.transform.scale(fondo, self.tamaño_pantalla)
+
+    def blit_fondo(self):
+        self.pantalla.blit(self.fondo,(0,0))
+
+    def texto_en_pantalla(self, texto, color, x, y):
+        texto_en_pantalla = self.fuente.render(texto, True, color)
+        self.pantalla.blit(texto_en_pantalla, (x,y))
+
+    def recolectar_puntos(self, grupo_puntos_nivel):
+        if self.fin_juego >= 1:
+            if (pygame.sprite.spritecollide(self.heroe,grupo_puntos_nivel,True)):
+                self.puntos += 100
+                self.sonido_puntos.play()
+                self.sonido_puntos.set_volume(0.2)
+
+    def recolectar_vidas(self, grupo_vidas_nivel):
+        if self.fin_juego >= 1:
+            if pygame.sprite.spritecollide(self.heroe,grupo_vidas_nivel,True):
+                self.sonido_vidas.play()
+                self.sonido_vidas.set_volume(0.2)
+                self.vidas_spiderman += 1
+                if self.vidas_spiderman > 3:
+                    self.vidas_spiderman = 3
+
+    def registro_colisiones(self, grupo_enemigos_nivel, grupo_balas_1, grupo_balas_2, grupo_balas_3, grupo_jefe=[]):
+        if (pygame.sprite.spritecollide(self.heroe,grupo_enemigos_nivel,False) or 
+            pygame.sprite.spritecollide(self.heroe,grupo_balas_1,False) or
+            pygame.sprite.spritecollide(self.heroe,grupo_balas_2,False) or
+            pygame.sprite.spritecollide(self.heroe,grupo_balas_3,False) or
+            pygame.sprite.spritecollide(self.heroe,grupo_jefe,False)):
+            if self.heroe.fin_del_juego != 0:
+                self.sonido_resta_vida.play()
+                self.sonido_resta_vida.set_volume(0.2)
+            self.vidas_spiderman -= 1
+            if self.vidas_spiderman <= 0:
+                self.vidas_spiderman = 0
             else:
-                self.grupo_balas[i].trayectoria()
-            pantalla.blit(self.grupo_balas[i].image, self.grupo_balas[i].rect)
-            if self.grupo_balas[i].rect.bottom < 0 or self.listagrupo_balas_balas[i].rect.left > ancho_pantalla:
-                del self.grupo_balas[i]
+                self.heroe.rect.x = 55
+                self.heroe.rect.y = 554
+                self.sonido_resta_vida.play()
+                self.sonido_resta_vida.set_volume(0.2)
 
-
-
-grupo_balas = pygame.sprite.Group()
-
-# grupo_balas_nivel_2 = pygame.sprite.Group()
-# grupo_balas_nivel_3 = pygame.sprite.Group()
-
+    def registro_nivel(self):
+        return self.fin_juego
 
 
 

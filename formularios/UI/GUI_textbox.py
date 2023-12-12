@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from UI.GUI_widget import *
+from formularios.UI.GUI_widget import *
 import unicodedata
 
 FPS = 18

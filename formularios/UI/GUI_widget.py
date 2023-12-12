@@ -11,8 +11,7 @@ class Widget:
         self._slave = None
         self.slave_rect = None
         self.border_size = border_size
-        
-    
+
     def render(self):
         pass
     
@@ -21,4 +20,4 @@ class Widget:
     
     def draw(self):
         self._master.blit(self._slave,self.slave_rect)
-        pygame.draw.rect(self._master, self._color_border, self.slave_rect, self.border_size)
+        # pygame.draw.rect(self._master, self._color_border, self.slave_rect, self.border_size)

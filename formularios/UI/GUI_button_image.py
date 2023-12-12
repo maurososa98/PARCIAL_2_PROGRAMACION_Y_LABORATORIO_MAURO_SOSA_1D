@@ -1,7 +1,6 @@
 import pygame
 from pygame.locals import *
-from UI.GUI_widget import *
-
+from formularios.UI.GUI_widget import *
 FPS = 18
     
 class Button_Image(Widget):
